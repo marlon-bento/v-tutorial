@@ -19,34 +19,8 @@ focado na renderização dos escudos, spotlight, seta indicadora e Scoped Slots.
           mergedClasses.root,
         ]"
       >
-        <!-- SLOT: Botão Global de Sair no Topo Direito -->
-        <slot name="exit-button" v-bind="slotContext">
-          <button
-            type="button"
-            :class="[
-              !isUnstyled && 'v-tutorial-exit-pill',
-              mergedClasses.exitPill,
-            ]"
-            @click.prevent="endTutorial(true)"
-            :title="`${mergedLabels.skipTutorial} (Esc)`"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M18 6l-12 12" />
-              <path d="M6 6l12 12" />
-            </svg>
-            <span>{{ mergedLabels.skipTutorial }}</span>
-          </button>
-        </slot>
+        <!-- SLOT OPCIONAL: Permite que o desenvolvedor adicione um controle externo se desejar -->
+        <slot name="exit-button" v-bind="slotContext" />
 
         <!-- CENÁRIO 1: Passo COM elemento destacado (4 escudos + Spotlight Ring) -->
         <template v-if="hasTargetBox">
@@ -1025,33 +999,6 @@ onUnmounted(() => {
   border: 1px solid color-mix(in srgb, var(--v-tutorial-primary), transparent 65%);
   padding: 0.28rem 0.7rem;
   border-radius: 8px;
-}
-
-.v-tutorial-exit-pill {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  z-index: calc(var(--v-tutorial-z-index) + 20);
-  pointer-events: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.45rem 0.95rem;
-  border-radius: 999px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #fff;
-  background: var(--v-tutorial-danger);
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 8px 24px rgba(214, 57, 57, 0.55);
-  cursor: pointer;
-  margin: 0 !important;
-  transition: transform 0.15s ease, background-color 0.15s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    filter: brightness(0.92);
-  }
 }
 
 .tutorial-fade-enter-active,

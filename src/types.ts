@@ -86,7 +86,6 @@ export interface TutorialClasses {
   prevButton?: string
   nextButton?: string
   waitPill?: string
-  exitPill?: string
 }
 
 // Opções de configuração global ou por instância do tutorial

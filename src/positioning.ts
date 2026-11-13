@@ -83,7 +83,7 @@ export function calcularPosicaoCard(
     const sheetW = Math.min(vw - 20, 440)
     const sheetLeft = Math.round((vw - sheetW) / 2)
 
-    const topSheetY = 58
+    const topSheetY = 12
     const topSheetBottom = topSheetY + cardHeight
     const bottomSheetTop = vh - 12 - cardHeight
     const bottomSheetBottom = vh - 12
@@ -153,7 +153,7 @@ export function calcularPosicaoCard(
       return {
         resolvedPlacement: 'top-sheet',
         cardStyle: {
-          top: '58px',
+          top: '12px',
           left: `${sheetLeft}px`,
           bottom: 'auto',
           width: `${sheetW}px`,
