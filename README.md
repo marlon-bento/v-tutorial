@@ -19,6 +19,15 @@
 
 ---
 
+## 🚀 Live Demo & Showcase Project
+
+Want to test `v-tutorial` in action or see how a real multi-route Vue 3 + TypeScript application is structured? Check out **OdontoTec**, my complete interactive showcase project:
+
+* 🌐 **Try the Live Demo (GitHub Pages):** [https://marlon-bento.github.io/v-tutorial-showcase/](https://marlon-bento.github.io/v-tutorial-showcase/)
+* 📂 **Explore the Example Repository:** [https://github.com/marlon-bento/v-tutorial-showcase](https://github.com/marlon-bento/v-tutorial-showcase)
+
+---
+
 ## 📋 Table of Contents
 
 1. [Why `v-tutorial`? (+ Comparison Table)](#1-why-v-tutorial)

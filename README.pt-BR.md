@@ -18,6 +18,15 @@
 
 ---
 
+## 🚀 Demonstração Online e Projeto de Exemplo
+
+Quer testar o `v-tutorial` funcionando na prática ou consultar o código completo de uma aplicação Vue 3 + TypeScript com múltiplas rotas, modais e responsividade Mobile-First? Confira o **OdontoTec**, meu projeto oficial de demonstração:
+
+* 🌐 **Testar Demonstração Online (GitHub Pages):** [https://marlon-bento.github.io/v-tutorial-showcase/](https://marlon-bento.github.io/v-tutorial-showcase/)
+* 📂 **Ver Repositório do Projeto de Exemplo:** [https://github.com/marlon-bento/v-tutorial-showcase](https://github.com/marlon-bento/v-tutorial-showcase)
+
+---
+
 ## 📋 Sumário
 
 1. [Por que usar o `v-tutorial`? (+ Tabela Comparativa)](#1-por-que-usar-o-v-tutorial)
