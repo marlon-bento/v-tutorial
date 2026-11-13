@@ -1,0 +1,91 @@
+{
+  "name": "v-tutorial",
+  "private": false,
+  "version": "1.0.0",
+  "author": "Márlon Bento Azevedo (https://github.com/marlon-bento)",
+  "license": "MIT",
+  "homepage": "https://github.com/marlon-bento/v-tutorial#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marlon-bento/v-tutorial.git"
+  },
+  "bugs": {
+    "url": "https://github.com/marlon-bento/v-tutorial/issues"
+  },
+  "description": "100% Interactive, Mobile-First (Bootstrap-style) & Headless-ready guided tours, product walkthrough and user onboarding library for Vue 3",
+  "keywords": [
+    "vue",
+    "vue3",
+    "vue-3",
+    "v-tutorial",
+    "tutorial",
+    "onboarding",
+    "user-onboarding",
+    "tour",
+    "guided-tour",
+    "product-tour",
+    "walkthrough",
+    "step-by-step",
+    "spotlight",
+    "coach-mark",
+    "feature-discovery",
+    "interactive-tour",
+    "joyride",
+    "driver.js",
+    "shepherd",
+    "intro.js",
+    "vue-tour",
+    "vue-onboarding",
+    "vue-router",
+    "directive",
+    "composable",
+    "mobile-first",
+    "responsive",
+    "bottom-sheet",
+    "headless",
+    "typescript"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md",
+    "README.pt-BR.md"
+  ],
+  "main": "./dist/v-tutorial.umd.cjs",
+  "module": "./dist/v-tutorial.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/v-tutorial.js",
+      "require": "./dist/v-tutorial.umd.cjs"
+    },
+    "./style.css": "./dist/style.css",
+    "./dist/style.css": "./dist/style.css"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "build:watch": "vite build --watch",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  },
+  "devDependencies": {
+    "@release-it/conventional-changelog": "^11.0.1",
+    "@types/node": "^20.0.0",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "release-it": "^20.2.1",
+    "sass-embedded": "^1.80.0",
+    "typescript": "^5.4.0",
+    "vite": "^5.4.0",
+    "vite-plugin-dts": "^4.3.0",
+    "vue": "^3.4.0",
+    "vue-tsc": "^2.0.0"
+  }
+}
