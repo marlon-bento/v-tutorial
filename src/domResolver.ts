@@ -1,8 +1,9 @@
 /*
 ========
 Módulo de resolução de elementos DOM e controle de scroll do v-tutorial (domResolver.ts).
-Localiza elementos via diretiva v-tutorial ou seletores CSS, priorizando nós visíveis
-e calculando a caixa delimitadora unificada (DOMRect) para um ou múltiplos alvos.
+Localiza elementos via diretiva v-tutorial ou seletores CSS, priorizando nós visíveis,
+calculando a caixa delimitadora unificada (DOMRect) para um ou múltiplos alvos e emitindo
+avisos detalhados quando seletores são inválidos ou elementos permanecem ocultos/ausentes.
 ========
 */
 import type { TutorialStep, TutorialTargetConfig } from './types'
@@ -12,6 +13,17 @@ export const registeredElements = new Map<
   string,
   { el: HTMLElement; config: TutorialTargetConfig }
 >()
+
+/*
+Formata o identificador do alvo (string ou lista de seletores) para exibição legível nos logs de aviso.
+Recebe: target (string, array de strings ou undefined).
+Devolve: string formatada representando o(s) seletor(es).
+Por que é usada: Facilita a leitura das mensagens de diagnóstico quando um passo possui múltiplos seletores.
+*/
+export function formatarAlvoParaLog(target?: string | string[]): string {
+  if (!target) return '(sem target)'
+  return Array.isArray(target) ? target.join(', ') : target
+}
 
 /*
 Verifica se um elemento HTML está presente no documento e possui dimensões visíveis na tela.
@@ -29,21 +41,25 @@ export function verificarElementoVisivel(el: HTMLElement | null): el is HTMLElem
 Resolve um único identificador ou seletor CSS para seu respectivo HTMLElement visível no DOM.
 Recebe: targetSelector (string com ID do v-tutorial ou seletor CSS).
 Devolve: HTMLElement encontrado ou null.
-Por que é usada: Unifica a busca por diretiva, atributo data-tutorial-id, ID ou seletor CSS.
+Por que é usada: Unifica a busca por diretiva, atributo data-tutorial-id, ID ou seletor CSS e avisa sobre seletores malformados.
 */
 export function resolverSeletorUnico(targetSelector: string): HTMLElement | null {
-  if (!targetSelector || typeof document === 'undefined') return null
+  if (!targetSelector || !targetSelector.trim() || typeof document === 'undefined') return null
 
   const registered = registeredElements.get(targetSelector)
   if (registered && verificarElementoVisivel(registered.el)) {
     return registered.el
   }
 
-  const byDataAttrList = Array.from(
-    document.querySelectorAll(`[data-tutorial-id="${targetSelector}"]`)
-  ) as HTMLElement[]
-  const visibleDataAttr = byDataAttrList.find((el) => verificarElementoVisivel(el))
-  if (visibleDataAttr) return visibleDataAttr
+  try {
+    const byDataAttrList = Array.from(
+      document.querySelectorAll(`[data-tutorial-id="${targetSelector.replace(/"/g, '\\"')}"]`)
+    ) as HTMLElement[]
+    const visibleDataAttr = byDataAttrList.find((el) => verificarElementoVisivel(el))
+    if (visibleDataAttr) return visibleDataAttr
+  } catch {
+    // Segue para resolução por ID ou seletor CSS
+  }
 
   const cleanId = targetSelector.replace(/^#/, '')
   const byId = document.getElementById(cleanId)
@@ -55,6 +71,10 @@ export function resolverSeletorUnico(targetSelector: string): HTMLElement | null
     if (visibleMatch) return visibleMatch
     return (nodeList[0] as HTMLElement) || null
   } catch {
+    console.warn(
+      `[v-tutorial] Seletor CSS inválido informado no target: "${targetSelector}". ` +
+        `Verifique a sintaxe do seletor CSS ou confirme se o elemento utiliza v-tutorial="'${targetSelector}'".`
+    )
     return null
   }
 }
@@ -127,7 +147,7 @@ export async function rolarParaElementoSeNecessario(
   autoScrollAtivo: boolean,
   scrollBehavior: ScrollBehavior = 'smooth'
 ): Promise<void> {
-  if (!autoScrollAtivo) return
+  if (!autoScrollAtivo || typeof window === 'undefined') return
 
   const rect = el.getBoundingClientRect()
   const margin = 70
@@ -137,7 +157,7 @@ export async function rolarParaElementoSeNecessario(
     rect.bottom <= window.innerHeight - margin &&
     rect.right <= window.innerWidth
 
-  if (!isInViewport) {
+  if (!isInViewport && typeof el.scrollIntoView === 'function') {
     try {
       el.scrollIntoView({
         behavior: scrollBehavior,
@@ -146,7 +166,11 @@ export async function rolarParaElementoSeNecessario(
       })
       await new Promise((r) => setTimeout(r, 220))
     } catch {
-      el.scrollIntoView()
+      try {
+        el.scrollIntoView()
+      } catch {
+        // Ignora caso o ambiente de teste não implemente scrollIntoView
+      }
     }
   }
 }
@@ -155,7 +179,7 @@ export async function rolarParaElementoSeNecessario(
 Aguarda até que o elemento do passo exista no DOM e tenha dimensões maiores que zero.
 Recebe: step (passo alvo), autoScrollAtivo (booleano), scrollBehavior e timeoutMs.
 Devolve: Promise<HTMLElement | null>.
-Por que é usada: Sincroniza o spotlight com modais v-if e trocas de rota assíncronas.
+Por que é usada: Sincroniza o spotlight com modais v-if e trocas de rota assíncronas e emite avisos claros em caso de falha.
 */
 export async function aguardarElementoNoDom(
   step: TutorialStep | null,
@@ -178,5 +202,20 @@ export async function aguardarElementoNoDom(
     await new Promise((r) => setTimeout(r, 40))
   }
 
-  return resolveStepElement(step)
+  const elementoFinal = resolveStepElement(step)
+  const alvoTexto = formatarAlvoParaLog(step.target)
+
+  if (!elementoFinal) {
+    console.warn(
+      `[v-tutorial] Passo "${step.id}" ("${step.title}"): o elemento alvo "${alvoTexto}" não foi encontrado no DOM após aguardar ${timeoutMs}ms. ` +
+        `Verifique se o seletor CSS ou diretiva v-tutorial está correto e se o componente foi renderizado na tela.`
+    )
+  } else if (!verificarElementoVisivel(elementoFinal)) {
+    console.warn(
+      `[v-tutorial] Passo "${step.id}" ("${step.title}"): o elemento alvo "${alvoTexto}" existe no DOM, mas permanece oculto (largura ou altura igual a 0) após ${timeoutMs}ms. ` +
+        `Verifique se o elemento está com "display: none" ou dentro de um menu/modal fechado.`
+    )
+  }
+
+  return elementoFinal
 }

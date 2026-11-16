@@ -97,6 +97,8 @@ export interface TutorialOptions {
   cardWidth?: number
   showArrow?: boolean
   unstyled?: boolean
+  /** Tempo máximo em ms para aguardar o registro de uma ação tardia via registerAction (padrão: 800ms) */
+  actionTimeout?: number
   /** Limiares em pixels para os breakpoints Mobile-First (padrão Bootstrap 5) */
   breakpoints?: Partial<TutorialBreakpointsConfig>
   /** Se true, em telas xs/sm o placement="auto" ancora o card no topo ou rodapé para não cobrir o alvo */

@@ -1,0 +1,339 @@
+/*
+========
+Folha de estilos oficial da biblioteca v-tutorial (src/tutorial.scss).
+Define as variáveis CSS customizáveis (--v-tutorial-*), integração automática com temas
+claros e escuros (Bootstrap / Tabler), os 4 escudos invisíveis de clique, o anel pulsante
+de spotlight, o card flutuante, a seta indicadora e as transições suaves.
+========
+*/
+
+// Container raiz fixo do tutorial e declaração de variáveis CSS padrão (Light Mode)
+.v-tutorial-root {
+  --v-tutorial-primary: var(--tblr-primary, #206bc4);
+  --v-tutorial-bg: var(--tblr-bg-surface, #ffffff);
+  --v-tutorial-bg-secondary: var(--tblr-bg-surface-secondary, #f8fafc);
+  --v-tutorial-text: var(--tblr-body-color, #1e293b);
+  --v-tutorial-muted: var(--tblr-secondary, #64748b);
+  --v-tutorial-border: var(--tblr-border-color-translucent, rgba(15, 23, 42, 0.12));
+  --v-tutorial-danger: var(--tblr-danger, #d63939);
+  --v-tutorial-backdrop: rgba(10, 14, 23, 0.68);
+  --v-tutorial-radius: 16px;
+  --v-tutorial-z-index: 10040;
+
+  position: fixed;
+  inset: 0;
+  z-index: var(--v-tutorial-z-index);
+  pointer-events: none;
+  font-family: inherit;
+}
+
+// Adaptação automática de cores para Dark Mode ([data-bs-theme="dark"] ou classe .dark)
+[data-bs-theme='dark'] .v-tutorial-root,
+.dark .v-tutorial-root {
+  --v-tutorial-bg: var(--tblr-bg-surface, #1e293b);
+  --v-tutorial-bg-secondary: var(--tblr-bg-surface-secondary, #0f172a);
+  --v-tutorial-text: var(--tblr-body-color, #f8fafc);
+  --v-tutorial-muted: var(--tblr-secondary, #94a3b8);
+  --v-tutorial-border: var(--tblr-border-color-translucent, rgba(255, 255, 255, 0.12));
+}
+
+// Fundo escurecido completo exibido quando o passo é centralizado (sem elemento alvo)
+.v-tutorial-full-backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--v-tutorial-backdrop);
+  pointer-events: auto;
+  z-index: calc(var(--v-tutorial-z-index) + 1);
+}
+
+// Escudos transparentes que bloqueiam cliques fora da área do botão destacado
+.v-tutorial-click-shield {
+  position: fixed;
+  z-index: calc(var(--v-tutorial-z-index) + 1);
+  pointer-events: auto;
+  background: transparent;
+}
+
+// Anel luminoso ao redor do elemento alvo que projeta a sombra escura no restante da tela
+.v-tutorial-spotlight-ring {
+  position: fixed;
+  border-radius: 12px;
+  border: 3px solid var(--v-tutorial-primary);
+  box-shadow: 0 0 0 9999px var(--v-tutorial-backdrop),
+    0 0 0 4px color-mix(in srgb, var(--v-tutorial-primary), transparent 70%),
+    0 0 28px color-mix(in srgb, var(--v-tutorial-primary), transparent 35%);
+  pointer-events: none !important;
+  transition: top 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    left 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: calc(var(--v-tutorial-z-index) + 2);
+
+  &.is-wait-click {
+    animation: spotlightPulse 1.5s infinite ease-in-out;
+  }
+}
+
+// Animação de pulsação do foco quando o passo aguarda o clique obrigatório do usuário
+@keyframes spotlightPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 9999px var(--v-tutorial-backdrop),
+      0 0 0 4px color-mix(in srgb, var(--v-tutorial-primary), transparent 65%),
+      0 0 25px color-mix(in srgb, var(--v-tutorial-primary), transparent 35%);
+  }
+  50% {
+    box-shadow: 0 0 0 9999px var(--v-tutorial-backdrop),
+      0 0 0 9px color-mix(in srgb, var(--v-tutorial-primary), transparent 85%),
+      0 0 35px color-mix(in srgb, var(--v-tutorial-primary), transparent 15%);
+  }
+}
+
+// Card flutuante principal onde ficam cabeçalho, texto explicativo, barra de progresso e botões
+.v-tutorial-card {
+  position: fixed;
+  max-width: calc(100vw - 24px);
+  background: var(--v-tutorial-bg);
+  color: var(--v-tutorial-text);
+  border: 1px solid color-mix(in srgb, var(--v-tutorial-primary), var(--v-tutorial-border) 55%);
+  border-radius: var(--v-tutorial-radius);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.42);
+  pointer-events: auto;
+  z-index: calc(var(--v-tutorial-z-index) + 15);
+  overflow: visible;
+  transition: top 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    left 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    bottom 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+// Seta triangular (caret) posicionada na borda do card apontando para o elemento alvo
+.v-tutorial-arrow {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: var(--v-tutorial-bg);
+  border-color: color-mix(in srgb, var(--v-tutorial-primary), var(--v-tutorial-border) 55%);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+  z-index: -1;
+
+  &.arrow-right {
+    left: -6px;
+    transform: translateY(-50%) rotate(45deg);
+    border-left-width: 1px;
+    border-bottom-width: 1px;
+  }
+
+  &.arrow-left {
+    right: -6px;
+    transform: translateY(-50%) rotate(45deg);
+    border-right-width: 1px;
+    border-top-width: 1px;
+  }
+
+  &.arrow-bottom {
+    top: -6px;
+    transform: translateX(-50%) rotate(45deg);
+    border-left-width: 1px;
+    border-top-width: 1px;
+  }
+
+  &.arrow-top {
+    bottom: -6px;
+    transform: translateX(-50%) rotate(45deg);
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+  }
+}
+
+// Cabeçalho superior do card contendo o contador de passos e a tag de modo interativo
+.v-tutorial-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1.1rem;
+  background: color-mix(in srgb, var(--v-tutorial-primary), transparent 90%);
+  border-bottom: 1px solid var(--v-tutorial-border);
+  border-radius: calc(var(--v-tutorial-radius) - 1px) calc(var(--v-tutorial-radius) - 1px) 0 0;
+}
+
+// Pílula com a numeração do passo atual (ex: Passo 1 de 5)
+.v-tutorial-step-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--v-tutorial-primary);
+  background: color-mix(in srgb, var(--v-tutorial-primary), transparent 84%);
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+}
+
+// Rótulo secundário indicando passo interativo
+.v-tutorial-mode-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--v-tutorial-muted);
+}
+
+// Corpo central do card onde são renderizados o título e o conteúdo ou slot
+.v-tutorial-card-body {
+  padding: 1rem 1.1rem;
+}
+
+// Título principal do passo dentro do card
+.v-tutorial-title {
+  margin: 0 0 0.4rem 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--v-tutorial-text);
+}
+
+// Texto descritivo do passo
+.v-tutorial-content {
+  font-size: 0.88rem;
+  line-height: 1.48;
+  color: var(--v-tutorial-muted);
+}
+
+// Faixa destacada que orienta o usuário a clicar no elemento real da tela
+.v-tutorial-click-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--v-tutorial-primary);
+  background: color-mix(in srgb, var(--v-tutorial-primary), transparent 90%);
+  border-top: 1px dashed color-mix(in srgb, var(--v-tutorial-primary), transparent 65%);
+}
+
+// Ícone de cursor com animação de pulso dentro da faixa de clique
+.pulse-click-icon {
+  flex-shrink: 0;
+  animation: iconBounce 1.1s infinite ease-in-out;
+}
+
+@keyframes iconBounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+}
+
+// Trilho da barra de progresso entre o corpo e o rodapé do card
+.v-tutorial-progress {
+  height: 4px;
+  width: 100%;
+  background: var(--v-tutorial-border);
+}
+
+// Preenchimento dinâmico da barra de progresso
+.v-tutorial-progress-bar {
+  height: 100%;
+  background: var(--v-tutorial-primary);
+  transition: width 0.3s ease;
+}
+
+// Rodapé do card contendo o botão de pular e os controles de navegação (Anterior / Próximo)
+.v-tutorial-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1.1rem;
+  background: color-mix(in srgb, var(--v-tutorial-bg-secondary), transparent 35%);
+  border-top: 1px solid var(--v-tutorial-border);
+  border-radius: 0 0 calc(var(--v-tutorial-radius) - 1px) calc(var(--v-tutorial-radius) - 1px);
+
+  button {
+    margin: 0 !important;
+  }
+}
+
+// Agrupador alinhado à direita para os botões Anterior e Próximo
+.v-tutorial-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+// Estilos base compartilhados pelos botões de ação do card
+.v-tutorial-btn-skip,
+.v-tutorial-btn-prev,
+.v-tutorial-btn-next {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+// Botão de encerrar/pular o tutorial
+.v-tutorial-btn-skip {
+  background: transparent;
+  color: var(--v-tutorial-danger);
+  border: 1px solid color-mix(in srgb, var(--v-tutorial-danger), transparent 50%);
+
+  &:hover {
+    background: var(--v-tutorial-danger);
+    color: #fff;
+  }
+}
+
+// Botão de voltar ao passo anterior
+.v-tutorial-btn-prev {
+  background: transparent;
+  color: var(--v-tutorial-muted);
+  border: 1px solid transparent;
+
+  &:hover {
+    background: color-mix(in srgb, var(--v-tutorial-muted), transparent 88%);
+    color: var(--v-tutorial-text);
+  }
+}
+
+// Botão principal de avançar ou concluir o tutorial
+.v-tutorial-btn-next {
+  background: var(--v-tutorial-primary);
+  color: #fff;
+  border: 1px solid var(--v-tutorial-primary);
+  padding: 0.35rem 0.9rem;
+  font-weight: 700;
+
+  &:hover {
+    filter: brightness(1.08);
+  }
+}
+
+// Pílula informativa exibida no lugar do botão Próximo durante o modo wait-click
+.v-tutorial-wait-pill {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--v-tutorial-primary);
+  background: color-mix(in srgb, var(--v-tutorial-primary), transparent 88%);
+  border: 1px solid color-mix(in srgb, var(--v-tutorial-primary), transparent 65%);
+  padding: 0.28rem 0.7rem;
+  border-radius: 8px;
+}
+
+// Transição de entrada e saída do overlay completo do tutorial
+.tutorial-fade-enter-active,
+.tutorial-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.tutorial-fade-enter-from,
+.tutorial-fade-leave-to {
+  opacity: 0;
+}

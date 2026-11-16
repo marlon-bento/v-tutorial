@@ -9,5 +9,5 @@ import type { TutorialProviderInjection } from './types'
 
 // Chave única de injeção para registro automático de passos declarativos no template
 export const TUTORIAL_PROVIDER_KEY: InjectionKey<TutorialProviderInjection> = Symbol(
-  'SISTEC_TUTORIAL_PROVIDER_KEY'
+  'v-tutorial_TUTORIAL_PROVIDER_KEY'
 )

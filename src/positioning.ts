@@ -93,10 +93,12 @@ export function calcularPosicaoCard(
     const overlapsBottomSheet =
       rect.y < bottomSheetBottom + 10 && rect.y + rect.height > bottomSheetTop - 10
 
-    if (placement === 'top-sheet' && overlapsTopSheet) {
-      if (!overlapsBottomSheet) {
-        placement = 'bottom-sheet'
-      } else if (spaceBottom >= spaceTop) {
+    if (placement === 'top-sheet' && overlapsTopSheet && !overlapsBottomSheet) {
+      placement = 'bottom-sheet'
+    } else if (placement === 'bottom-sheet' && overlapsBottomSheet && !overlapsTopSheet) {
+      placement = 'top-sheet'
+    } else if (overlapsTopSheet && overlapsBottomSheet) {
+      if (spaceBottom >= spaceTop) {
         const safeTop = Math.min(vh - cardHeight - 10, rect.y + rect.height + 12)
         return {
           resolvedPlacement: 'bottom',
@@ -111,13 +113,7 @@ export function calcularPosicaoCard(
             left: `${Math.max(24, Math.min(sheetW - 24, rect.x + rect.width / 2 - sheetLeft))}px`,
           },
         }
-      }
-    }
-
-    if (placement === 'bottom-sheet' && overlapsBottomSheet) {
-      if (!overlapsTopSheet) {
-        placement = 'top-sheet'
-      } else if (spaceTop > spaceBottom) {
+      } else {
         const safeTop = Math.max(12, rect.y - cardHeight - 12)
         return {
           resolvedPlacement: 'top',

@@ -1,13 +1,14 @@
 /*
 ========
-Ponto de entrada e exportação pública do módulo de tutorial (index.ts).
+Ponto de entrada e exportação pública da biblioteca v-tutorial (src/index.ts).
 Exporta os tipos, utilitários responsivos, resolvedores de DOM, posicionamento,
+módulos internos (state, storage, actions, navigation, directive, useSpotlightTracker),
 o composable useTutorial, componentes e registra tipagens globais para o Volar (VS Code).
 ========
 */
 import type { App } from 'vue'
 import type { TutorialOptions } from './types'
-import { useTutorial, vTutorial } from './useTutorial'
+import { useTutorial, vTutorial, registeredActions } from './useTutorial'
 import TutorialProvider from './TutorialProvider.vue'
 import TutorialStepComponent from './TutorialStep.vue'
 
@@ -16,13 +17,20 @@ export * from './keys'
 export * from './responsive'
 export * from './domResolver'
 export * from './positioning'
-export { useTutorial, vTutorial }
+export * from './state'
+export * from './storage'
+export * from './actions'
+export * from './navigation'
+export * from './directive'
+export * from './useSpotlightTracker'
+export { useTutorial, vTutorial, registeredActions }
 export {
   TutorialProvider,
   TutorialStepComponent as VTutorialStep,
   TutorialStepComponent,
 }
 
+// Plugin Vue para instalação global via app.use(TutorialPlugin, options)
 export const TutorialPlugin = {
   install(app: App, options?: Partial<TutorialOptions>) {
     if (options) {
